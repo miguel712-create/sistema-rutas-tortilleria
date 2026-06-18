@@ -335,7 +335,19 @@ doc.text(`Pendiente: ${formatoDinero(ruta.total_pendiente || 0)}`, 14, 90);
       "Cobrado",
       "Pend."
     ]],
-    body: (ruta.registros || []).map((r) => [
+    body: [
+  [
+    "Resumen",
+    `${ruta.total_tortilla_kg || 0} kg`,
+    "",
+    `${ruta.total_masa_kg || 0} kg`,
+    "",
+    ruta.total_totopos || 0,
+    formatoDinero(ruta.total_venta || 0),
+    formatoDinero(ruta.total_cobrado || 0),
+    formatoDinero(ruta.total_pendiente || 0),
+  ],
+],
       r.tienda,
       `${r.tortillaDejada || 0} kg`,
       `${r.tortillaDevuelta || 0} kg`,
