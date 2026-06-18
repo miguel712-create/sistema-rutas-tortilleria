@@ -229,15 +229,24 @@ const editarRegistro = (registro, index) => {
   setModoEdicion(true);
   setPantalla("entrega");
 };
-const borrarRutaCerrada = (idRuta) => {
+const borrarRutaCerrada = async (idRuta) => {
   const confirmar = window.confirm(
     "¿Seguro que quieres borrar esta ruta cerrada? Esta acción no se puede deshacer."
   );
 
   if (!confirmar) return;
 
-  const nuevasRutas = rutasCerradas.filter((ruta) => ruta.id !== idRuta);
-setRutasCerradas(nuevasRutas);
+  const { error } = await supabase
+    .from("rutas_cerradas")
+    .delete()
+    .eq("id", idRuta);
+
+  if (error) {
+    alert("Error al borrar: " + error.message);
+    return;
+  }
+
+  await cargarRutasCerradas();
 
   if (rutaSeleccionada && rutaSeleccionada.id === idRuta) {
     setRutaSeleccionada(null);
@@ -347,16 +356,6 @@ doc.text(`Pendiente: ${formatoDinero(ruta.total_pendiente || 0)}`, 14, 90);
   formatoDinero(r.cobrado || 0),
   formatoDinero(r.saldoPendiente || 0),
 ]),
-      r.tienda,
-      `${r.tortillaDejada || 0} kg`,
-      `${r.tortillaDevuelta || 0} kg`,
-      `${r.masaDejada || 0} kg`,
-      `${r.masaDevuelta || 0} kg`,
-      r.totoposDejados || 0,
-      formatoDinero(r.totalVenta),
-      formatoDinero(r.cobrado),
-      formatoDinero(r.saldoPendiente),
-    ]),
     styles: {
       fontSize: 8,
       cellPadding: 2,
@@ -586,9 +585,24 @@ const cargarRutasCerradas = async () => {
     return;
   }
 
+  const rutasConvertidas = (data || []).map((ruta) => ({
+    ...ruta,
+    fechaCierre: ruta.fecha
+      ? new Date(ruta.fecha).toLocaleString()
+      : ruta.fecha_cierre || "Sin fecha",
+    registros: Array.isArray(ruta.registros) ? ruta.registros : [],
+    resumen: {
+      tiendasVisitadas: ruta.tiendas_visitadas || 0,
+      ventaTotal: ruta.total_venta || 0,
+      dineroCobrado: ruta.total_cobrado || 0,
+      saldoPendiente: ruta.total_pendiente || 0,
+      tortillaEntregada: ruta.total_tortilla_kg || 0,
+      masaEntregada: ruta.total_masa_kg || 0,
+      totoposVendidos: ruta.total_totopos || 0,
+    },
+  }));
 
-
-  setRutasCerradas(data || []);
+  setRutasCerradas(rutasConvertidas);
 };
 
 const registrarEmpleado = async () => {
@@ -944,13 +958,23 @@ const esDueno =
 <p>Cobrado: {formatoDinero(ruta.total_cobrado || 0)}</p>
 <p>Pendiente: {formatoDinero(ruta.total_pendiente || 0)}</p>
           {esDueno && (
-  <button onClick={() => exportarRutaPDF(ruta)}>
+  <button
+  onClick={(e) => {
+    e.stopPropagation();
+    exportarRutaPDF(ruta);
+  }}
+>
     📄 Exportar PDF
   </button>
 )}
 
 {esDueno && (
-  <button onClick={() => borrarRutaCerrada(ruta.id)}>
+  <button
+  onClick={(e) => {
+    e.stopPropagation();
+    borrarRutaCerrada(ruta.id);
+  }}
+>
     🗑️ Borrar
   </button>
 )}
