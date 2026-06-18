@@ -852,7 +852,7 @@ const esDueno =
             <div className="registro" key={index}>
               <strong>{r.tienda}</strong>
               <p>{r.fecha}</p>
-              <p>🌮 Tortilla dejada: {r.tortillaDejada || 0} kg</p>
+<p>🌮 Tortilla dejada: {r.tortillaDejada || 0} kg</p>
 <p>↩️ Tortilla devuelta: {r.tortillaDevuelta || 0} kg</p>
 <p>💰 Subtotal tortilla: {formatoDinero(r.totalTortilla)}</p>
 
@@ -862,9 +862,11 @@ const esDueno =
 
 <p>🛍️ Totopos dejados: {r.totoposDejados || 0}</p>
 <p>💰 Subtotal totopos: {formatoDinero(r.totalTotopos)}</p>
-              <h3>Total: {formatoDinero(r.totalVenta)}</h3>
-              <p>Cobrado: {formatoDinero(r.cobrado)}</p>
-              <p>Pendiente: {formatoDinero(r.saldoPendiente)}</p>
+
+<h3>🏪 Total: {formatoDinero(r.totalVenta)}</h3>
+
+<p>💵 Cobrado: {formatoDinero(r.cobrado)}</p>
+<p>📋 Pendiente: {formatoDinero(r.saldoPendiente)}</p>
          <button onClick={() => editarRegistro(r, index)}>
   ✏️ Editar
 </button>
