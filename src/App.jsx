@@ -20,6 +20,11 @@ const [usuario, setUsuario] = useState(null);
 const [loginEmail, setLoginEmail] = useState("");
 const [loginPassword, setLoginPassword] = useState("");
 const [cargandoLogin, setCargandoLogin] = useState(true);
+const [perfil, setPerfil] = useState(null);
+const [mostrarRegistro, setMostrarRegistro] = useState(false);
+const [registroNombre, setRegistroNombre] = useState("");
+const [registroEmail, setRegistroEmail] = useState("");
+const [registroPassword, setRegistroPassword] = useState("");
 
   const [tortillaDejada, setTortillaDejada] = useState("");
   const [tortillaDevuelta, setTortillaDevuelta] = useState("");
@@ -54,16 +59,23 @@ useEffect(() => {
 }, [registros]);
 
 useEffect(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    setUsuario(data.session?.user || null);
-    setCargandoLogin(false);
-  });
+ supabase.auth.getSession().then(({ data: { session } }) => {
+  setUsuario(session?.user ?? null);
+  if (session?.user) cargarPerfil(session.user.id);
+  setCargandoLogin(false);
+});
 
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((_event, session) => {
-    setUsuario(session?.user || null);
-  });
+  setUsuario(session?.user ?? null);
+
+  if (session?.user) {
+    cargarPerfil(session.user.id);
+  } else {
+    setPerfil(null);
+  }
+});
 
   return () => subscription.unsubscribe();
 }, []);
@@ -400,6 +412,50 @@ const totoposRestantes =
     </div>
   );
 }
+const cargarPerfil = async (userId) => {
+  const { data, error } = await supabase
+    .from("perfiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (!error) setPerfil(data);
+};
+const registrarEmpleado = async () => {
+  if (!registroNombre || !registroEmail || !registroPassword) {
+    alert("Completa nombre, correo y contraseña");
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signUp({
+    email: registroEmail,
+    password: registroPassword,
+  });
+
+  if (error) {
+    alert("No se pudo registrar: " + error.message);
+    return;
+  }
+
+  if (data.user) {
+    const { error: perfilError } = await supabase.from("perfiles").insert({
+      id: data.user.id,
+      nombre: registroNombre,
+      rol: "repartidor",
+    });
+
+    if (perfilError) {
+      alert("Usuario creado, pero falló el perfil: " + perfilError.message);
+      return;
+    }
+  }
+
+  alert("Empleado registrado como repartidor");
+  setMostrarRegistro(false);
+  setRegistroNombre("");
+  setRegistroEmail("");
+  setRegistroPassword("");
+};
 const iniciarSesion = async () => {
   if (!loginEmail || !loginPassword) {
     alert("Escribe correo y contraseña");
@@ -468,7 +524,13 @@ if (!usuario) {
         <button onClick={() => setPantalla("corte")}>Corte del día</button>
         <button onClick={() => setPantalla("inventario")}>Inventario</button>
         <button onClick={() => setPantalla("rutasCerradas")}>Rutas cerradas</button>
+        {perfil?.rol === "dueno" && (
+  <button onClick={() => setPantalla("administracion")}>
+    Administración
+  </button>
+)}
         <button onClick={cerrarSesion}>Cerrar sesión</button>
+
       </div>
 
       {pantalla === "entrega" && (
@@ -746,6 +808,39 @@ if (!usuario) {
         <p>Pendiente: {formatoDinero(r.saldoPendiente)}</p>
       </div>
     ))}
+  </div>
+)}
+{pantalla === "administracion" && perfil?.rol === "dueno" && (
+  <div className="card">
+    <h2>👤 Administración de empleados</h2>
+
+    <label>Nombre del empleado</label>
+    <input
+      type="text"
+      value={registroNombre}
+      onChange={(e) => setRegistroNombre(e.target.value)}
+      placeholder="Ej. Juan Pérez"
+    />
+
+    <label>Correo electrónico</label>
+    <input
+      type="email"
+      value={registroEmail}
+      onChange={(e) => setRegistroEmail(e.target.value)}
+      placeholder="empleado@correo.com"
+    />
+
+    <label>Contraseña</label>
+    <input
+      type="password"
+      value={registroPassword}
+      onChange={(e) => setRegistroPassword(e.target.value)}
+      placeholder="Contraseña"
+    />
+
+    <button onClick={registrarEmpleado}>
+      ➕ Registrar empleado
+    </button>
   </div>
 )}
     </div>

@@ -413,7 +413,6 @@ hr {
   .pagado {
     font-size: 24px;
   }
-}
 @media (min-width: 700px) {
   .app {
     max-width: none;
