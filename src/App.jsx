@@ -928,10 +928,9 @@ const esDueno =
           }}
         >
           <h3>{ruta.fechaCierre}</h3>
-          <p>Tiendas: {ruta.resumen.tiendasVisitadas}</p>
-          <p>Venta: {formatoDinero(ruta.resumen.ventaTotal)}</p>
-          <p>Cobrado: {formatoDinero(ruta.resumen.dineroCobrado)}</p>
-          <p>Pendiente: {formatoDinero(ruta.resumen.saldoPendiente)}</p>
+          <p>Venta: {formatoDinero(ruta.total_venta || 0)}</p>
+<p>Cobrado: {formatoDinero(ruta.total_cobrado || 0)}</p>
+<p>Pendiente: {formatoDinero(ruta.total_pendiente || 0)}</p>
           {esDueno && (
   <button onClick={() => exportarRutaPDF(ruta)}>
     📄 Exportar PDF
