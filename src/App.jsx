@@ -522,22 +522,6 @@ const cerrarSesion = async () => {
   await supabase.auth.signOut();
   setUsuario(null);
 };
-if (cargandoLogin) {
-  return (
-    <div className="splash">
-      <h1>Cargando...</h1>
-      <button
-        onClick={() => {
-          setCargandoLogin(false);
-          setUsuario(null);
-          setPerfil(null);
-        }}
-      >
-        Entrar manualmente
-      </button>
-    </div>
-  );
-}
 
 if (!usuario) {
   return (
