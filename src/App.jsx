@@ -515,9 +515,10 @@ console.log("PERFIL CARGADO:", data);
 
 const cargarEntregas = async () => {
   const { data, error } = await supabase
-    .from("entregas")
-    .select("*")
-    .order("fecha", { ascending: false });
+  .from("entregas")
+  .select("*")
+  .eq("ruta_cerrada", false)
+  .order("fecha", { ascending: false });
 
   if (error) {
     alert("Error al cargar entregas: " + error.message);
