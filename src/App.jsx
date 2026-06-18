@@ -447,9 +447,15 @@ const cargarPerfil = async (userId) => {
     .from("perfiles")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
-  if (!error) setPerfil(data);
+  if (error) {
+    console.log("Error perfil:", error.message);
+    setPerfil(null);
+    return;
+  }
+console.log("PERFIL CARGADO:", data);
+  setPerfil(data);
 };
 const registrarEmpleado = async () => {
   if (!registroNombre || !registroEmail || !registroPassword) {
@@ -492,14 +498,24 @@ const iniciarSesion = async () => {
     return;
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  setCargandoLogin(true);
+
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: loginEmail,
     password: loginPassword,
   });
 
   if (error) {
+    setCargandoLogin(false);
     alert("No se pudo iniciar sesión: " + error.message);
+    return;
   }
+
+  if (data.user) {
+    await cargarPerfil(data.user.id);
+  }
+
+  setCargandoLogin(false);
 };
 
 const cerrarSesion = async () => {
@@ -552,6 +568,9 @@ if (!usuario) {
     </div>
   );
 }
+const esDueno =
+  perfil?.rol === "dueno" ||
+  usuario?.email === "miguel71294@gmail.com";
   return (
     <div className="app">
       <h1>Ruta Mi Tierra</h1>
@@ -561,19 +580,19 @@ if (!usuario) {
 
 <button onClick={() => setPantalla("historial")}>Historial</button>
 
-{perfil?.rol === "dueno" && (
+{esDueno && (
   <button onClick={() => setPantalla("corte")}>Corte del día</button>
 )}
 
-{perfil?.rol === "dueno" && (
+{esDueno && (
   <button onClick={() => setPantalla("inventario")}>Inventario</button>
 )}
 
-{perfil?.rol === "dueno" && (
+{esDueno && (
   <button onClick={() => setPantalla("rutasCerradas")}>Rutas cerradas</button>
 )}
 
-{perfil?.rol === "dueno" && (
+{esDueno && (
   <button onClick={() => setPantalla("administracion")}>
     Administración
   </button>
@@ -685,7 +704,7 @@ if (!usuario) {
          <button onClick={() => editarRegistro(r, index)}>
   ✏️ Editar
 </button>
-              {perfil?.rol === "dueno" && (
+              {esDueno && (
   <button onClick={() => borrarRegistro(index)}>
     🗑️ Borrar registro
   </button>
@@ -791,13 +810,13 @@ if (!usuario) {
           <p>Venta: {formatoDinero(ruta.resumen.ventaTotal)}</p>
           <p>Cobrado: {formatoDinero(ruta.resumen.dineroCobrado)}</p>
           <p>Pendiente: {formatoDinero(ruta.resumen.saldoPendiente)}</p>
-          {perfil?.rol === "dueno" && (
+          {esDueno && (
   <button onClick={() => exportarRutaPDF(ruta)}>
     📄 Exportar PDF
   </button>
 )}
 
-{perfil?.rol === "dueno" && (
+{esDueno && (
   <button onClick={() => borrarRutaCerrada(ruta.id)}>
     🗑️ Borrar
   </button>
@@ -857,7 +876,7 @@ if (!usuario) {
     ))}
   </div>
 )}
-{pantalla === "administracion" && perfil?.rol === "dueno" && (
+{pantalla === "administracion" && esDueno && (
   <div className="card">
     <h2>👤 Administración de empleados</h2>
 
