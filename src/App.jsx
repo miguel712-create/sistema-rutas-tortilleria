@@ -115,6 +115,8 @@ const iniciarRutaNueva = async () => {
 
   if (!confirmar) return;
 
+  console.log("REGISTROS ANTES DE CERRAR:", registros);
+
   if (registros.length > 0) {
     const rutaCerrada = {
       id: Date.now(),
@@ -153,6 +155,23 @@ if (error) {
 
     setRutasCerradas([rutaCerrada, ...rutasCerradas]);
   }
+
+  const idsRegistros = registros
+  .filter((r) => r.id)
+  .map((r) => r.id);
+  console.log("IDS A CERRAR:", idsRegistros);
+
+if (idsRegistros.length > 0) {
+  const { error: errorCerrarEntregas } = await supabase
+    .from("entregas")
+    .update({ ruta_cerrada: true })
+    .in("id", idsRegistros);
+
+  if (errorCerrarEntregas) {
+    alert("Error al cerrar entregas: " + errorCerrarEntregas.message);
+    return;
+  }
+}
 
   setRegistros([]);
   setInventario({
