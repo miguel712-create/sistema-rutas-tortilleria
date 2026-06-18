@@ -1,0 +1,579 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(0, 168, 79, 0.18), transparent 35%),
+    linear-gradient(180deg, #eef7f1 0%, #f8fafc 45%, #eef2f7 100%);
+  color: #111827;
+}
+
+.app {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 22px 14px 70px;
+}
+
+.app > h1 {
+  background: linear-gradient(135deg, #006b2e, #00a84f);
+  color: white;
+  text-align: center;
+  padding: 24px 18px;
+  border-radius: 28px;
+  font-size: 34px;
+  font-weight: 950;
+  letter-spacing: 0.5px;
+  box-shadow: 0 18px 35px rgba(0, 90, 40, 0.28);
+  margin: 8px 0 22px;
+}
+
+.app > h1::before {
+  content: "🚚 ";
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.menu button {
+  background: white;
+  color: #064e3b;
+  border: 2px solid #d9f2df;
+  border-radius: 20px;
+  padding: 16px 10px;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+}
+
+.menu button:nth-child(1)::before {
+  content: "➕ ";
+}
+
+.menu button:nth-child(2)::before {
+  content: "📋 ";
+}
+
+.menu button:nth-child(3)::before {
+  content: "📊 ";
+}
+
+.menu button:nth-child(4)::before {
+  content: "📦 ";
+}
+
+.menu button:nth-child(5)::before {
+  content: "🗂️ ";
+}
+
+.menu button:nth-child(6)::before {
+  content: "🏪 ";
+}
+
+.card,
+.registro {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 26px;
+  padding: 22px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(10px);
+}
+
+.card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #064e3b;
+  font-size: 27px;
+  font-weight: 950;
+  margin-top: 0;
+}
+
+.card h2::before {
+  content: "🌽";
+}
+
+h3 {
+  color: #065f46;
+  font-size: 21px;
+  font-weight: 950;
+}
+
+label {
+  display: block;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 900;
+  margin: 14px 0 6px;
+}
+
+p,
+strong {
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 750;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 18px;
+  border: 2px solid #d1d5db;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 850;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #00a84f;
+  box-shadow: 0 0 0 4px rgba(0, 168, 79, 0.18);
+}
+
+button {
+  width: 100%;
+  background: linear-gradient(135deg, #009444, #006b2e);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 950;
+  margin-top: 12px;
+  box-shadow: 0 12px 24px rgba(0, 100, 45, 0.28);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.resumen {
+  background: linear-gradient(135deg, #ecfdf5, #ffffff);
+  border: 2px solid #bbf7d0;
+  border-radius: 22px;
+  padding: 18px;
+  margin: 18px 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+.resumen h3::before {
+  content: "🧾 ";
+}
+
+.resumen p {
+  color: #064e3b;
+  margin: 9px 0;
+}
+
+.total-cobrar {
+  background: linear-gradient(135deg, #00a84f, #006b2e);
+  color: white;
+  text-align: center;
+  padding: 24px;
+  border-radius: 24px;
+  margin: 22px 0;
+  font-size: 30px;
+  font-weight: 950;
+  box-shadow: 0 16px 32px rgba(0, 120, 55, 0.35);
+}
+
+.total-cobrar::before {
+  content: "💰 ";
+}
+
+.pendiente {
+  background: linear-gradient(135deg, #ef4444, #991b1b);
+  color: white;
+  text-align: center;
+  padding: 24px;
+  border-radius: 24px;
+  margin: 20px 0;
+  font-size: 27px;
+  font-weight: 950;
+  box-shadow: 0 16px 32px rgba(185, 28, 28, 0.28);
+}
+
+.pendiente::before {
+  content: "⚠️ ";
+}
+
+.pagado {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+  color: white;
+  text-align: center;
+  padding: 24px;
+  border-radius: 24px;
+  margin: 20px 0;
+  font-size: 27px;
+  font-weight: 950;
+  box-shadow: 0 16px 32px rgba(21, 128, 61, 0.28);
+}
+
+.pagado::before {
+  content: "✅ ";
+}
+
+.registro {
+  border-left: 9px solid #00a84f;
+  position: relative;
+}
+
+.registro h3 {
+  margin-top: 0;
+}
+
+.registro h3::before {
+  content: "🏪 ";
+}
+
+.registro p {
+  margin: 8px 0;
+}
+
+hr {
+  border: none;
+  border-top: 2px dashed #cbd5e1;
+  margin: 24px 0;
+}
+
+.splash {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #005624, #00a84f);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  animation: fadeSplash 8s ease-in-out;
+}
+
+.splash-logo {
+  width: 190px;
+  height: 190px;
+  background: white;
+  border-radius: 46px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.32);
+  margin-bottom: 24px;
+  animation: aparecerLogo 1.2s ease-out;
+}
+
+.splash-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.splash h1 {
+  color: white;
+  font-size: 40px;
+  font-weight: 950;
+  letter-spacing: 2px;
+  margin: 10px 0;
+  animation: aparecerTexto 1s ease-out;
+  animation-delay: 0.4s;
+  animation-fill-mode: both;
+}
+
+.splash p {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  animation: aparecerTexto 1s ease-out;
+  animation-delay: 0.7s;
+  animation-fill-mode: both;
+}
+
+.loader {
+  margin-top: 28px;
+  width: 45px;
+  height: 45px;
+  border: 5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes aparecerLogo {
+  0% {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+
+  70% {
+    transform: scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes aparecerTexto {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSplash {
+  0% {
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 800px) {
+  .menu {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 18px 12px 50px;
+  }
+
+  .app > h1 {
+    font-size: 30px;
+    border-radius: 24px;
+  }
+
+  .menu {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .menu button {
+    font-size: 14px;
+    padding: 15px 8px;
+  }
+
+  .card,
+  .registro {
+    padding: 18px;
+    border-radius: 22px;
+  }
+
+  .total-cobrar,
+  .pendiente,
+  .pagado {
+    font-size: 24px;
+  }
+}
+@media (min-width: 700px) {
+  .app {
+    max-width: none;
+    margin: 0;
+    padding: 28px 28px 70px 150px;
+    min-height: 100vh;
+    background: #f6f8fb;
+  }
+
+  .app > h1 {
+    margin: -28px -28px 28px -150px;
+    padding: 18px 24px 18px 170px;
+    border-radius: 0;
+    text-align: left;
+    font-size: 26px;
+    background: linear-gradient(135deg, #031b33, #062b4f);
+  }
+
+  .menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 125px;
+    height: 100vh;
+    background: linear-gradient(180deg, #02182d, #031f3b);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 90px 12px 20px;
+    z-index: 50;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .menu button {
+    background: transparent;
+    color: white;
+    border: none;
+    box-shadow: none;
+    border-radius: 18px;
+    min-height: 78px;
+    font-size: 13px;
+    padding: 12px 8px;
+  }
+
+  .menu button:hover,
+  .menu button:focus {
+    background: linear-gradient(135deg, #00a84f, #007a36);
+  }
+
+  .menu button::before {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .card {
+    max-width: 820px;
+    margin: 0 auto 20px;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  }
+
+  .registro {
+    border-left: none;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .registro h3::before {
+    content: "🏪 ";
+  }
+}
+
+.card h2 {
+  color: #0f172a;
+}
+
+.card h2::before {
+  content: "📋";
+}
+
+button {
+  background: linear-gradient(135deg, #0066d9, #004db3);
+}
+
+.registro p:nth-of-type(1)::before {
+  content: "📅 ";
+}
+
+.registro p:nth-of-type(2)::before {
+  content: "🌮 ";
+}
+
+.registro p:nth-of-type(3)::before {
+  content: "↩️ ";
+}
+
+.registro p:nth-of-type(4)::before {
+  content: "🌽 ";
+}
+
+.registro p:nth-of-type(5)::before {
+  content: "↩️ ";
+}
+
+.registro p:nth-of-type(6)::before {
+  content: "🛍️ ";
+}
+@media (max-width: 699px) {
+  .app {
+    max-width: 100%;
+    margin: 0;
+    padding: 18px 12px 70px;
+    min-height: 100vh;
+    background: #f6f8fb;
+    overflow-x: hidden;
+  }
+
+  .app > h1 {
+    margin: 0 0 18px;
+    padding: 22px 16px;
+    border-radius: 24px;
+    text-align: center;
+    font-size: 28px;
+  }
+
+  .menu {
+    position: static;
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0;
+    margin-bottom: 18px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .menu button {
+    min-height: auto;
+    padding: 15px 8px;
+    font-size: 14px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #009444, #006b2e);
+    color: white;
+    box-shadow: 0 8px 18px rgba(0, 100, 45, 0.22);
+  }
+
+  .menu button::before {
+    display: inline;
+    font-size: 16px;
+    margin-bottom: 0;
+  }
+
+  .card,
+  .registro {
+    max-width: 100%;
+    width: 100%;
+    border-radius: 20px;
+    padding: 16px;
+  }
+
+  input,
+  select,
+  button {
+    font-size: 16px;
+  }
+}
