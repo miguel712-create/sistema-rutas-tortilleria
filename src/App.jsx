@@ -362,7 +362,7 @@ const exportarRutaPDF = (ruta) => {
   const totalVenta = totalTortilla + totalMasa + totalTotopos;
   const saldoPendiente = totalVenta - Number(cobrado || 0);
 
-  const guardar = () => {
+  const guardar = async () => {
     const nuevoRegistro = {
       tienda: tiendaSeleccionada.nombre,
       fecha: new Date().toLocaleString(),
@@ -380,7 +380,24 @@ masaDevuelta: Number(masaDevuelta || 0),
       cobrado: Number(cobrado || 0),
       saldoPendiente,
     };
+const { error } = await supabase.from("entregas").insert({
+  usuario_id: usuario.id,
+  tienda: nuevoRegistro.tienda,
+  tortilla_dejada: nuevoRegistro.tortillaDejada,
+  tortilla_devuelta: nuevoRegistro.tortillaDevuelta,
+  masa_dejada: nuevoRegistro.masaDejada,
+  masa_devuelta: nuevoRegistro.masaDevuelta,
+  totopos_dejados: nuevoRegistro.totoposDejados,
+  total_venta: nuevoRegistro.totalVenta,
+  cobrado: nuevoRegistro.cobrado,
+  saldo_pendiente: nuevoRegistro.saldoPendiente,
+  creada_por_nombre: perfil?.nombre || usuario?.email || "",
+});
 
+if (error) {
+  alert("Error al guardar: " + error.message);
+  return;
+}
     if (modoEdicion && editandoIndex !== null) {
   const registrosActualizados = [...registros];
   registrosActualizados[editandoIndex] = nuevoRegistro;
