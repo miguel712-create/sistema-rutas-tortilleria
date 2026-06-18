@@ -555,6 +555,8 @@ const cargarEntregas = async () => {
     return;
   }
 
+  alert("Rutas cargadas: " + (data?.length || 0));
+
   setRutasCerradas(data || []);
 };
 
