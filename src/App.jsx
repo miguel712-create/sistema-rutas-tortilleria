@@ -99,12 +99,7 @@ useEffect(() => {
 
   return () => subscription.unsubscribe();
 }, []);
-useEffect(() => {
-  localStorage.setItem(
-    "historialRutasMiTierra",
-    JSON.stringify(historialRutas)
-  );
-}, [historialRutas]);
+
 useEffect(() => {
   const timer = setTimeout(() => {
     setMostrarBienvenida(false);
@@ -151,7 +146,7 @@ const iniciarRutaNueva = () => {
 
   setPantalla("inventario");
 };
-const borrarRegistro = (indexABorrar) => {
+const borrarRegistro = async (indexABorrar) => {
   const confirmar = window.confirm(
     "¿Seguro que quieres borrar este registro? Esta acción no se puede deshacer."
   );
@@ -159,7 +154,21 @@ const borrarRegistro = (indexABorrar) => {
   if (!confirmar) return;
 
   const nuevosRegistros = registros.filter((_, index) => index !== indexABorrar);
-  setRegistros(nuevosRegistros);
+  const registro = registros[indexABorrar];
+
+if (registro?.id) {
+  const { error } = await supabase
+    .from("entregas")
+    .delete()
+    .eq("id", registro.id);
+
+  if (error) {
+    alert("Error al borrar: " + error.message);
+    return;
+  }
+}
+
+await cargarEntregas();
 };
 const editarRegistro = (registro, index) => {
   const tiendaEncontrada = tiendas.find(
