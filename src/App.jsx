@@ -510,7 +510,15 @@ if (cargandoLogin) {
   return (
     <div className="splash">
       <h1>Cargando...</h1>
-      <div className="loader"></div>
+      <button
+        onClick={() => {
+          setCargandoLogin(false);
+          setUsuario(null);
+          setPerfil(null);
+        }}
+      >
+        Entrar manualmente
+      </button>
     </div>
   );
 }
