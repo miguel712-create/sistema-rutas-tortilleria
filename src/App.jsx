@@ -32,10 +32,7 @@ const [registroPassword, setRegistroPassword] = useState("");
   const [masaDevuelta, setMasaDevuelta] = useState("");
   const [totoposDejados, setTotoposDejados] = useState("");
   const [cobrado, setCobrado] = useState("");
-  const [registros, setRegistros] = useState(() => {
-  const guardados = localStorage.getItem("registrosRutaMiTierra");
-  return guardados ? JSON.parse(guardados) : [];
-});
+  const [registros, setRegistros] = useState([]);
 const [inventario, setInventario] = useState(() => {
   const guardado = localStorage.getItem("inventarioRutaMiTierra");
   return guardado
@@ -608,7 +605,14 @@ const esDueno =
       <div className="menu">
         <button onClick={() => setPantalla("entrega")}>Nueva entrega</button>
 
-<button onClick={() => setPantalla("historial")}>Historial</button>
+<button
+  onClick={async () => {
+    await cargarEntregas();
+    setPantalla("historial");
+  }}
+>
+  Historial
+</button>
 
 {esDueno && (
   <button onClick={() => setPantalla("corte")}>Corte del día</button>
