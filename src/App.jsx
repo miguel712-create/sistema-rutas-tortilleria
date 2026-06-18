@@ -703,7 +703,9 @@ const esDueno =
 
 {esDueno && (
   <button
+  style={{ background: "red", color: "white" }}
   onClick={async () => {
+    alert("Sí entró al botón");
     await cargarRutasCerradas();
     setPantalla("rutasCerradas");
   }}
