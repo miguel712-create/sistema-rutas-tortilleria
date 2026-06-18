@@ -143,6 +143,7 @@ const iniciarRutaNueva = async () => {
   total_venta: totalDia,
   total_cobrado: cobradoDia,
   total_pendiente: pendienteDia,
+  tiendas_visitadas: registros.length,
   total_tortilla_kg: tortillaEntregadaDia,
   total_masa_kg: masaEntregadaDia,
   total_totopos: totoposVendidosDia,
@@ -274,10 +275,10 @@ const exportarRutaCSV = (ruta) => {
     [],
     ["RESUMEN"],
     ["Fecha cierre", ruta.fechaCierre],
-    ["Tiendas visitadas", ruta.resumen.tiendasVisitadas],
-    ["Venta total", ruta.resumen.ventaTotal],
-    ["Cobrado", ruta.resumen.dineroCobrado],
-    ["Pendiente", ruta.resumen.saldoPendiente],
+    ["Tiendas visitadas", ruta.tiendas_visitadas || 0],
+["Venta total", ruta.total_venta || 0],
+["Cobrado", ruta.total_cobrado || 0],
+["Pendiente", ruta.total_pendiente || 0],
   ];
 
   const contenido = [encabezados, ...filas, ...resumen]
@@ -316,10 +317,10 @@ const exportarRutaPDF = (ruta) => {
 
   doc.setFontSize(11);
   doc.text(`Fecha cierre: ${ruta.fechaCierre}`, 14, 58);
-  doc.text(`Tiendas visitadas: ${ruta.resumen.tiendasVisitadas}`, 14, 66);
-  doc.text(`Venta total: ${formatoDinero(ruta.resumen.ventaTotal)}`, 14, 74);
-  doc.text(`Cobrado: ${formatoDinero(ruta.resumen.dineroCobrado)}`, 14, 82);
-  doc.text(`Pendiente: ${formatoDinero(ruta.resumen.saldoPendiente)}`, 14, 90);
+  doc.text(`Tiendas visitadas: ${ruta.tiendas_visitadas || 0}`, 14, 66);
+doc.text(`Venta total: ${formatoDinero(ruta.total_venta || 0)}`, 14, 74);
+doc.text(`Cobrado: ${formatoDinero(ruta.total_cobrado || 0)}`, 14, 82);
+doc.text(`Pendiente: ${formatoDinero(ruta.total_pendiente || 0)}`, 14, 90);
 
   autoTable(doc, {
     startY: 100,
@@ -574,7 +575,7 @@ const cargarRutasCerradas = async () => {
     return;
   }
 
-  alert("Rutas cargadas: " + (data?.length || 0));
+
 
   setRutasCerradas(data || []);
 };
@@ -705,7 +706,7 @@ const esDueno =
   <button
   style={{ background: "red", color: "white" }}
   onClick={async () => {
-    alert("Sí entró al botón");
+
     await cargarRutasCerradas();
     setPantalla("rutasCerradas");
   }}
