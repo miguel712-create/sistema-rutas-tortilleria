@@ -43,17 +43,12 @@ const [inventario, setInventario] = useState(() => {
         totoposInicial: "",
       };
 });
-const [historialRutas, setHistorialRutas] = useState(() => {
-  const guardado = localStorage.getItem("historialRutasMiTierra");
-  return guardado ? JSON.parse(guardado) : [];
-});
+
 useEffect(() => {
   localStorage.setItem("inventarioRutaMiTierra", JSON.stringify(inventario));
 }, [inventario]);
 
-useEffect(() => {
-  localStorage.setItem("registrosRutaMiTierra", JSON.stringify(registros));
-}, [registros]);
+
 
 useEffect(() => {
   const revisarSesion = async () => {
@@ -480,6 +475,8 @@ const cargarEntregas = async () => {
     alert("Error al cargar entregas: " + error.message);
     return;
   }
+
+  alert("Entregas cargadas: " + data.length);
 
   const entregasConvertidas = data.map((e) => ({
     id: e.id,
