@@ -499,29 +499,7 @@ button {
   background: linear-gradient(135deg, #0066d9, #004db3);
 }
 
-.registro p:nth-of-type(1)::before {
-  content: "📅 ";
-}
 
-.registro p:nth-of-type(2)::before {
-  content: "🌮 ";
-}
-
-.registro p:nth-of-type(3)::before {
-  content: "↩️ ";
-}
-
-.registro p:nth-of-type(4)::before {
-  content: "🌽 ";
-}
-
-.registro p:nth-of-type(5)::before {
-  content: "↩️ ";
-}
-
-.registro p:nth-of-type(6)::before {
-  content: "🛍️ ";
-}
 @media (max-width: 699px) {
   .app {
     max-width: 100%;
