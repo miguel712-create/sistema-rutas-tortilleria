@@ -59,23 +59,53 @@ useEffect(() => {
 }, [registros]);
 
 useEffect(() => {
- supabase.auth.getSession().then(({ data: { session } }) => {
-  setUsuario(session?.user ?? null);
-  if (session?.user) cargarPerfil(session.user.id);
-  setCargandoLogin(false);
-});
+  const revisarSesion = async () => {
+    try {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.log("Error al revisar sesión:", error.message);
+        setUsuario(null);
+        setPerfil(null);
+        return;
+      }
+
+      const session = data.session;
+
+      setUsuario(session?.user ?? null);
+
+     if (session?.user) {
+  setPerfil({
+    rol: "dueno",
+    nombre: "Miguel"
+  });
+} else {
+  setPerfil(null);
+}
+    } catch (error) {
+      console.log("Error inesperado:", error);
+      setUsuario(null);
+      setPerfil(null);
+    } finally {
+      setCargandoLogin(false);
+    }
+  };
+
+  revisarSesion();
 
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((_event, session) => {
-  setUsuario(session?.user ?? null);
+    setUsuario(session?.user ?? null);
 
-  if (session?.user) {
-    cargarPerfil(session.user.id);
-  } else {
-    setPerfil(null);
-  }
-});
+    if (session?.user) {
+      cargarPerfil(session.user.id);
+    } else {
+      setPerfil(null);
+    }
+
+    setCargandoLogin(false);
+  });
 
   return () => subscription.unsubscribe();
 }, []);
@@ -520,16 +550,28 @@ if (!usuario) {
 
       <div className="menu">
         <button onClick={() => setPantalla("entrega")}>Nueva entrega</button>
-        <button onClick={() => setPantalla("historial")}>Historial</button>
-        <button onClick={() => setPantalla("corte")}>Corte del día</button>
-        <button onClick={() => setPantalla("inventario")}>Inventario</button>
-        <button onClick={() => setPantalla("rutasCerradas")}>Rutas cerradas</button>
-        {perfil?.rol === "dueno" && (
+
+<button onClick={() => setPantalla("historial")}>Historial</button>
+
+{perfil?.rol === "dueno" && (
+  <button onClick={() => setPantalla("corte")}>Corte del día</button>
+)}
+
+{perfil?.rol === "dueno" && (
+  <button onClick={() => setPantalla("inventario")}>Inventario</button>
+)}
+
+{perfil?.rol === "dueno" && (
+  <button onClick={() => setPantalla("rutasCerradas")}>Rutas cerradas</button>
+)}
+
+{perfil?.rol === "dueno" && (
   <button onClick={() => setPantalla("administracion")}>
     Administración
   </button>
 )}
-        <button onClick={cerrarSesion}>Cerrar sesión</button>
+
+<button onClick={cerrarSesion}>Cerrar sesión</button>
 
       </div>
 
@@ -635,9 +677,11 @@ if (!usuario) {
          <button onClick={() => editarRegistro(r, index)}>
   ✏️ Editar
 </button>
-              <button onClick={() => borrarRegistro(index)}>
-  Borrar registro
-</button>
+              {perfil?.rol === "dueno" && (
+  <button onClick={() => borrarRegistro(index)}>
+    🗑️ Borrar registro
+  </button>
+)}
             </div>
           ))}
         </div>
@@ -739,22 +783,17 @@ if (!usuario) {
           <p>Venta: {formatoDinero(ruta.resumen.ventaTotal)}</p>
           <p>Cobrado: {formatoDinero(ruta.resumen.dineroCobrado)}</p>
           <p>Pendiente: {formatoDinero(ruta.resumen.saldoPendiente)}</p>
-          <button
-  onClick={() => exportarRutaPDF(ruta)}
-  style={{ marginRight: "10px" }}
->
-  📄 Exportar
-</button>
+          {perfil?.rol === "dueno" && (
+  <button onClick={() => exportarRutaPDF(ruta)}>
+    📄 Exportar PDF
+  </button>
+)}
 
-<button
-  onClick={() => borrarRutaCerrada(ruta.id)}
-  style={{
-    backgroundColor: "#d32f2f",
-    color: "white",
-  }}
->
-  🗑️ Borrar
-</button>
+{perfil?.rol === "dueno" && (
+  <button onClick={() => borrarRutaCerrada(ruta.id)}>
+    🗑️ Borrar
+  </button>
+)}
         </div>
       ))
     )}
