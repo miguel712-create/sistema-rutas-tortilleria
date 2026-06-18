@@ -852,11 +852,16 @@ const esDueno =
             <div className="registro" key={index}>
               <strong>{r.tienda}</strong>
               <p>{r.fecha}</p>
-              <p>Tortilla: {formatoDinero(r.totalTortilla)}</p>
-              <p>Tortilla devuelta: {r.tortillaDevuelta || 0} kg</p>
-              <p>Masa: {formatoDinero(r.totalMasa)}</p>
-              <p>Masa devuelta: {r.masaDevuelta || 0} kg</p>
-              <p>Totopos: {formatoDinero(r.totalTotopos)}</p>
+              <p>🌮 Tortilla dejada: {r.tortillaDejada || 0} kg</p>
+<p>↩️ Tortilla devuelta: {r.tortillaDevuelta || 0} kg</p>
+<p>💰 Subtotal tortilla: {formatoDinero(r.totalTortilla)}</p>
+
+<p>🌽 Masa dejada: {r.masaDejada || 0} kg</p>
+<p>↩️ Masa devuelta: {r.masaDevuelta || 0} kg</p>
+<p>💰 Subtotal masa: {formatoDinero(r.totalMasa)}</p>
+
+<p>🛍️ Totopos dejados: {r.totoposDejados || 0}</p>
+<p>💰 Subtotal totopos: {formatoDinero(r.totalTotopos)}</p>
               <h3>Total: {formatoDinero(r.totalVenta)}</h3>
               <p>Cobrado: {formatoDinero(r.cobrado)}</p>
               <p>Pendiente: {formatoDinero(r.saldoPendiente)}</p>
