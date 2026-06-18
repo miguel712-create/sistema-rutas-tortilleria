@@ -33,6 +33,7 @@ const [registroPassword, setRegistroPassword] = useState("");
   const [totoposDejados, setTotoposDejados] = useState("");
   const [cobrado, setCobrado] = useState("");
   const [registros, setRegistros] = useState([]);
+  const [rutasCerradas, setRutasCerradas] = useState([]);
 const [inventario, setInventario] = useState(() => {
   const guardado = localStorage.getItem("inventarioRutaMiTierra");
   return guardado
@@ -107,7 +108,7 @@ useEffect(() => {
 
   return () => clearTimeout(timer);
 }, []);
-const iniciarRutaNueva = () => {
+const iniciarRutaNueva = async () => {
   const confirmar = window.confirm(
     "¿Quieres cerrar la ruta actual y guardarla en el historial?"
   );
@@ -134,7 +135,23 @@ const iniciarRutaNueva = () => {
       },
     };
 
-    setHistorialRutas([rutaCerrada, ...historialRutas]);
+    const { error } = await supabase.from("rutas_cerradas").insert({
+  usuario_id: usuario.id,
+  creada_por_nombre: perfil?.nombre || usuario?.email || "",
+  total_venta: totalDia,
+  total_cobrado: cobradoDia,
+  total_pendiente: pendienteDia,
+  total_tortilla_kg: tortillaEntregadaDia,
+  total_masa_kg: masaEntregadaDia,
+  total_totopos: totoposVendidosDia,
+});
+
+if (error) {
+  alert("Error al cerrar ruta: " + error.message);
+  return;
+}
+
+    setRutasCerradas([rutaCerrada, ...rutasCerradas]);
   }
 
   setRegistros([]);
@@ -198,8 +215,8 @@ const borrarRutaCerrada = (idRuta) => {
 
   if (!confirmar) return;
 
-  const nuevasRutas = historialRutas.filter((ruta) => ruta.id !== idRuta);
-  setHistorialRutas(nuevasRutas);
+  const nuevasRutas = rutasCerradas.filter((ruta) => ruta.id !== idRuta);
+setRutasCerradas(nuevasRutas);
 
   if (rutaSeleccionada && rutaSeleccionada.id === idRuta) {
     setRutaSeleccionada(null);
@@ -382,33 +399,55 @@ masaDevuelta: Number(masaDevuelta || 0),
       cobrado: Number(cobrado || 0),
       saldoPendiente,
     };
-const { error } = await supabase.from("entregas").insert({
-  usuario_id: usuario.id,
-  tienda: nuevoRegistro.tienda,
-  tortilla_dejada: nuevoRegistro.tortillaDejada,
-  tortilla_devuelta: nuevoRegistro.tortillaDevuelta,
-  masa_dejada: nuevoRegistro.masaDejada,
-  masa_devuelta: nuevoRegistro.masaDevuelta,
-  totopos_dejados: nuevoRegistro.totoposDejados,
-  total_venta: nuevoRegistro.totalVenta,
-  cobrado: nuevoRegistro.cobrado,
-  saldo_pendiente: nuevoRegistro.saldoPendiente,
-  creada_por_nombre: perfil?.nombre || usuario?.email || "",
-});
+
+    if (modoEdicion && editandoIndex !== null) {
+  const registroOriginal = registros[editandoIndex];
+
+const { error } = await supabase
+  .from("entregas")
+  .update({
+    tienda: nuevoRegistro.tienda,
+    tortilla_dejada: nuevoRegistro.tortillaDejada,
+    tortilla_devuelta: nuevoRegistro.tortillaDevuelta,
+    masa_dejada: nuevoRegistro.masaDejada,
+    masa_devuelta: nuevoRegistro.masaDevuelta,
+    totopos_dejados: nuevoRegistro.totoposDejados,
+    total_venta: nuevoRegistro.totalVenta,
+    cobrado: nuevoRegistro.cobrado,
+    saldo_pendiente: nuevoRegistro.saldoPendiente,
+  })
+  .eq("id", registroOriginal.id);
 
 if (error) {
-  alert("Error al guardar: " + error.message);
+  alert("Error al editar: " + error.message);
   return;
 }
-    if (modoEdicion && editandoIndex !== null) {
-  const registrosActualizados = [...registros];
-  registrosActualizados[editandoIndex] = nuevoRegistro;
-  setRegistros(registrosActualizados);
+
+await cargarEntregas();
 
   setModoEdicion(false);
   setEditandoIndex(null);
 } else {
-  setRegistros([nuevoRegistro, ...registros]);
+  const { error } = await supabase.from("entregas").insert({
+    usuario_id: usuario.id,
+    tienda: nuevoRegistro.tienda,
+    tortilla_dejada: nuevoRegistro.tortillaDejada,
+    tortilla_devuelta: nuevoRegistro.tortillaDevuelta,
+    masa_dejada: nuevoRegistro.masaDejada,
+    masa_devuelta: nuevoRegistro.masaDevuelta,
+    totopos_dejados: nuevoRegistro.totoposDejados,
+    total_venta: nuevoRegistro.totalVenta,
+    cobrado: nuevoRegistro.cobrado,
+    saldo_pendiente: nuevoRegistro.saldoPendiente,
+    creada_por_nombre: perfil?.nombre || usuario?.email || "",
+  });
+
+  if (error) {
+    alert("Error al guardar: " + error.message);
+    return;
+  }
+
+  await cargarEntregas();
 }
 
     setTortillaDejada("");
@@ -485,7 +524,19 @@ const cargarEntregas = async () => {
     return;
   }
 
-  alert("Entregas cargadas: " + data.length);
+  const cargarRutasCerradas = async () => {
+  const { data, error } = await supabase
+    .from("rutas_cerradas")
+    .select("*")
+    .order("fecha", { ascending: false });
+
+  if (error) {
+    alert("Error al cargar rutas cerradas: " + error.message);
+    return;
+  }
+
+  setRutasCerradas(data || []);
+};
 
   const entregasConvertidas = data.map((e) => ({
     id: e.id,
@@ -629,7 +680,14 @@ const esDueno =
 )}
 
 {esDueno && (
-  <button onClick={() => setPantalla("rutasCerradas")}>Rutas cerradas</button>
+  <button
+  onClick={async () => {
+    await cargarRutasCerradas();
+    setPantalla("rutasCerradas");
+  }}
+>
+  Rutas cerradas
+</button>
 )}
 
 {esDueno && (
@@ -828,10 +886,10 @@ const esDueno =
   <div className="card">
     <h2>Rutas cerradas</h2>
 
-    {historialRutas.length === 0 ? (
+    {rutasCerradas.length === 0 ? (
       <p>No hay rutas guardadas.</p>
     ) : (
-      historialRutas.map((ruta) => (
+      rutasCerradas.map((ruta) => (
       <div
   key={ruta.id}
   onClick={() => {
