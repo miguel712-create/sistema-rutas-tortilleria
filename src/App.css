@@ -235,10 +235,6 @@ button:active {
   margin-top: 0;
 }
 
-.registro h3::before {
-  content: "🏪 ";
-}
-
 .registro p {
   margin: 8px 0;
 }
