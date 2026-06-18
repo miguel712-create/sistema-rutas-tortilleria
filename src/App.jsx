@@ -75,10 +75,7 @@ useEffect(() => {
       setUsuario(session?.user ?? null);
 
      if (session?.user) {
-  setPerfil({
-    rol: "dueno",
-    nombre: "Miguel"
-  });
+  await cargarPerfil(session.user.id);
 } else {
   setPerfil(null);
 }
