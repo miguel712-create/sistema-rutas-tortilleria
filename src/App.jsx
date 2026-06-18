@@ -564,6 +564,17 @@ const cargarEntregas = async () => {
     masaDejada: e.masa_dejada,
     masaDevuelta: e.masa_devuelta,
     totoposDejados: e.totopos_dejados,
+   totalTortilla:
+  (Number(e.tortilla_dejada || 0) - Number(e.tortilla_devuelta || 0)) *
+  (tiendas.find((t) => t.nombre === e.tienda)?.precioTortilla || 0),
+
+totalMasa:
+  (Number(e.masa_dejada || 0) - Number(e.masa_devuelta || 0)) *
+  (tiendas.find((t) => t.nombre === e.tienda)?.precioMasa || 0),
+
+totalTotopos:
+  Number(e.totopos_dejados || 0) *
+  (tiendas.find((t) => t.nombre === e.tienda)?.precioTotopos || 0),
     totalVenta: e.total_venta,
     cobrado: e.cobrado,
     saldoPendiente: e.saldo_pendiente,
