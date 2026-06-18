@@ -544,22 +544,6 @@ const cargarEntregas = async () => {
     return;
   }
 
-  const cargarRutasCerradas = async () => {
-  const { data, error } = await supabase
-    .from("rutas_cerradas")
-    .select("*")
-    .order("fecha", { ascending: false });
-
-  if (error) {
-    alert("Error al cargar rutas cerradas: " + error.message);
-    return;
-  }
-
-  alert("Rutas cargadas: " + (data?.length || 0));
-
-  setRutasCerradas(data || []);
-};
-
   const entregasConvertidas = data.map((e) => ({
     id: e.id,
     tienda: e.tienda,
@@ -577,6 +561,22 @@ const cargarEntregas = async () => {
   }));
 
   setRegistros(entregasConvertidas);
+};
+
+const cargarRutasCerradas = async () => {
+  const { data, error } = await supabase
+    .from("rutas_cerradas")
+    .select("*")
+    .order("fecha", { ascending: false });
+
+  if (error) {
+    alert("Error al cargar rutas cerradas: " + error.message);
+    return;
+  }
+
+  alert("Rutas cargadas: " + (data?.length || 0));
+
+  setRutasCerradas(data || []);
 };
 
 const registrarEmpleado = async () => {
