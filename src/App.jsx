@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import tiendas from "./tiendas";
 import jsPDF from "jspdf";
 import logoRutas from "./assets/logo-rutas.png";
+import { supabase } from "./supabase";
 import autoTable from "jspdf-autotable";
 import "./App.css";
 
@@ -15,6 +16,10 @@ function App() {
   const [tiendaId, setTiendaId] = useState(1);
   const [editandoIndex, setEditandoIndex] = useState(null);
 const [modoEdicion, setModoEdicion] = useState(false);
+const [usuario, setUsuario] = useState(null);
+const [loginEmail, setLoginEmail] = useState("");
+const [loginPassword, setLoginPassword] = useState("");
+const [cargandoLogin, setCargandoLogin] = useState(true);
 
   const [tortillaDejada, setTortillaDejada] = useState("");
   const [tortillaDevuelta, setTortillaDevuelta] = useState("");
@@ -47,6 +52,21 @@ useEffect(() => {
 useEffect(() => {
   localStorage.setItem("registrosRutaMiTierra", JSON.stringify(registros));
 }, [registros]);
+
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setUsuario(data.session?.user || null);
+    setCargandoLogin(false);
+  });
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setUsuario(session?.user || null);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
 useEffect(() => {
   localStorage.setItem(
     "historialRutasMiTierra",
@@ -380,6 +400,64 @@ const totoposRestantes =
     </div>
   );
 }
+const iniciarSesion = async () => {
+  if (!loginEmail || !loginPassword) {
+    alert("Escribe correo y contraseña");
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: loginEmail,
+    password: loginPassword,
+  });
+
+  if (error) {
+    alert("No se pudo iniciar sesión: " + error.message);
+  }
+};
+
+const cerrarSesion = async () => {
+  await supabase.auth.signOut();
+  setUsuario(null);
+};
+if (cargandoLogin) {
+  return (
+    <div className="splash">
+      <h1>Cargando...</h1>
+      <div className="loader"></div>
+    </div>
+  );
+}
+
+if (!usuario) {
+  return (
+    <div className="app">
+      <div className="card">
+        <h2>🔐 Iniciar sesión</h2>
+
+        <label>Correo</label>
+        <input
+          type="email"
+          placeholder="correo@ejemplo.com"
+          value={loginEmail}
+          onChange={(e) => setLoginEmail(e.target.value)}
+        />
+
+        <label>Contraseña</label>
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={loginPassword}
+          onChange={(e) => setLoginPassword(e.target.value)}
+        />
+
+        <button onClick={iniciarSesion}>
+          Entrar al sistema
+        </button>
+      </div>
+    </div>
+  );
+}
   return (
     <div className="app">
       <h1>Ruta Mi Tierra</h1>
@@ -390,6 +468,7 @@ const totoposRestantes =
         <button onClick={() => setPantalla("corte")}>Corte del día</button>
         <button onClick={() => setPantalla("inventario")}>Inventario</button>
         <button onClick={() => setPantalla("rutasCerradas")}>Rutas cerradas</button>
+        <button onClick={cerrarSesion}>Cerrar sesión</button>
       </div>
 
       {pantalla === "entrega" && (
