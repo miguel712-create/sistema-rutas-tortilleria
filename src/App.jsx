@@ -76,6 +76,7 @@ useEffect(() => {
 
      if (session?.user) {
   await cargarPerfil(session.user.id);
+  await cargarEntregas();
 } else {
   setPerfil(null);
 }
@@ -471,6 +472,37 @@ const cargarPerfil = async (userId) => {
 console.log("PERFIL CARGADO:", data);
   setPerfil(data);
 };
+
+const cargarEntregas = async () => {
+  const { data, error } = await supabase
+    .from("entregas")
+    .select("*")
+    .order("fecha", { ascending: false });
+
+  if (error) {
+    alert("Error al cargar entregas: " + error.message);
+    return;
+  }
+
+  const entregasConvertidas = data.map((e) => ({
+    id: e.id,
+    tienda: e.tienda,
+    fecha: new Date(e.fecha).toLocaleString(),
+    tortillaDejada: e.tortilla_dejada,
+    tortillaDevuelta: e.tortilla_devuelta,
+    masaDejada: e.masa_dejada,
+    masaDevuelta: e.masa_devuelta,
+    totoposDejados: e.totopos_dejados,
+    totalVenta: e.total_venta,
+    cobrado: e.cobrado,
+    saldoPendiente: e.saldo_pendiente,
+    creadaPorNombre: e.creada_por_nombre,
+    rutaCerrada: e.ruta_cerrada,
+  }));
+
+  setRegistros(entregasConvertidas);
+};
+
 const registrarEmpleado = async () => {
   if (!registroNombre || !registroEmail || !registroPassword) {
     alert("Completa nombre, correo y contraseña");
